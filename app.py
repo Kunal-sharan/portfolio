@@ -8,7 +8,29 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+import os
 
+def get_files_by_type_single_dir(directory_path, file_extension):
+    """
+    Retrieves files of a specific type from a single directory.
+
+    Args:
+        directory_path (str): The path to the directory to search.
+        file_extension (str): The desired file extension (e.g., '.txt', '.py').
+
+    Returns:
+        list: A list of full paths to the matching files.
+    """
+    matching_files = []
+    for filename in os.listdir(directory_path):
+        if filename.endswith(file_extension) and os.path.isfile(os.path.join(directory_path, filename)):
+            matching_files.append(os.path.join(directory_path, filename))
+    return matching_files
+
+# Example usage:
+# directory = 'blogs'
+# txt_files = get_files_by_type_single_dir(directory, '.md')
+# txt_files
 
 # js_code = """
 # <script>
@@ -308,19 +330,19 @@ if 'selected_blog' not in st.session_state:
     st.title("My Blog Collection")
     cols_per_row = 3
     rows = math.ceil(len(blogs) / cols_per_row)
-
-    for row in range(rows):
-        cols = st.columns(cols_per_row)
-        for i in range(cols_per_row):
-            idx = row * cols_per_row + i
-            if idx < len(blogs):
-                with cols[i]:
-                    with st.container(border=True):
-                        st.subheader(blogs[idx]['title'])
-                        st.write(blogs[idx]['summary'])
-                        if st.button("Read More", key=f'read_more_{idx}'):
-                            st.session_state['selected_blog'] = blogs[idx]
-                            st.rerun()
+    with st.container(height=500):
+        for row in range(rows):
+            cols = st.columns(cols_per_row)
+            for i in range(cols_per_row):
+                idx = row * cols_per_row + i
+                if idx < len(blogs):
+                    with cols[i]:
+                        with st.container(border=True):
+                            st.subheader(blogs[idx]['title'])
+                            st.write(blogs[idx]['summary'])
+                            if st.button("Read More", key=f'read_more_{idx}'):
+                                st.session_state['selected_blog'] = blogs[idx]
+                                st.rerun()
 
 else:
     show_full_blog(st.session_state['selected_blog'])
